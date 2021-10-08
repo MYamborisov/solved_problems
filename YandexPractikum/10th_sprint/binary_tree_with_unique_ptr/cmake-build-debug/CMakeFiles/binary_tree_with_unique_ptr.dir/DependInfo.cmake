@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/main.cpp" "C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/cmake-build-debug/CMakeFiles/binary_tree_with_unique_ptr.dir/main.cpp.obj"
+  "C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/tree.cpp" "C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/cmake-build-debug/CMakeFiles/binary_tree_with_unique_ptr.dir/tree.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "MSVC")
 

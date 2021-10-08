@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/binary_tree_with_unique_ptr.dir/main.cpp.obj"
+  "CMakeFiles/binary_tree_with_unique_ptr.dir/tree.cpp.obj"
   "binary_tree_with_unique_ptr.exe"
   "binary_tree_with_unique_ptr.exe.manifest"
   "binary_tree_with_unique_ptr.lib"

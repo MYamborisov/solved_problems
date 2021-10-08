@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/tree.cpp
+cassert
+-
+iostream
+-
+memory
+-
+

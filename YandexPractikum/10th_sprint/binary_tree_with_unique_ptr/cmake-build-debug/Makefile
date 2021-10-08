@@ -118,29 +118,29 @@ binary_tree_with_unique_ptr\fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\binary_tree_with_unique_ptr.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\binary_tree_with_unique_ptr.dir\build
 .PHONY : binary_tree_with_unique_ptr\fast
 
-main.obj: main.cpp.obj
-.PHONY : main.obj
+tree.obj: tree.cpp.obj
+.PHONY : tree.obj
 
 # target to build an object file
-main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\binary_tree_with_unique_ptr.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.obj
-.PHONY : main.cpp.obj
+tree.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\binary_tree_with_unique_ptr.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.obj
+.PHONY : tree.cpp.obj
 
-main.i: main.cpp.i
-.PHONY : main.i
+tree.i: tree.cpp.i
+.PHONY : tree.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\binary_tree_with_unique_ptr.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.i
-.PHONY : main.cpp.i
+tree.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\binary_tree_with_unique_ptr.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.i
+.PHONY : tree.cpp.i
 
-main.s: main.cpp.s
-.PHONY : main.s
+tree.s: tree.cpp.s
+.PHONY : tree.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\binary_tree_with_unique_ptr.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.s
-.PHONY : main.cpp.s
+tree.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\binary_tree_with_unique_ptr.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.s
+.PHONY : tree.cpp.s
 
 # Help Target
 help:
@@ -151,9 +151,9 @@ help:
 	@echo ... edit_cache
 	@echo ... rebuild_cache
 	@echo ... binary_tree_with_unique_ptr
-	@echo ... main.obj
-	@echo ... main.i
-	@echo ... main.s
+	@echo ... tree.obj
+	@echo ... tree.i
+	@echo ... tree.s
 .PHONY : help
 
 

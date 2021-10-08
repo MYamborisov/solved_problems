@@ -55,33 +55,33 @@ include CMakeFiles\binary_tree_with_unique_ptr.dir\progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles\binary_tree_with_unique_ptr.dir\flags.make
 
-CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.obj: CMakeFiles\binary_tree_with_unique_ptr.dir\flags.make
-CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.obj: ..\main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/binary_tree_with_unique_ptr.dir/main.cpp.obj"
+CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.obj: CMakeFiles\binary_tree_with_unique_ptr.dir\flags.make
+CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.obj: ..\tree.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/binary_tree_with_unique_ptr.dir/tree.cpp.obj"
 	C:\PROGRA~2\MICROS~1\2019\COMMUN~1\VC\Tools\MSVC\1426~1.288\bin\Hostx86\x86\cl.exe @<<
- /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.obj /FdCMakeFiles\binary_tree_with_unique_ptr.dir\ /FS -c C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\main.cpp
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.obj /FdCMakeFiles\binary_tree_with_unique_ptr.dir\ /FS -c C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\tree.cpp
 <<
 
-CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/binary_tree_with_unique_ptr.dir/main.cpp.i"
-	C:\PROGRA~2\MICROS~1\2019\COMMUN~1\VC\Tools\MSVC\1426~1.288\bin\Hostx86\x86\cl.exe > CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.i @<<
- /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\main.cpp
+CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/binary_tree_with_unique_ptr.dir/tree.cpp.i"
+	C:\PROGRA~2\MICROS~1\2019\COMMUN~1\VC\Tools\MSVC\1426~1.288\bin\Hostx86\x86\cl.exe > CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.i @<<
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\tree.cpp
 <<
 
-CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/binary_tree_with_unique_ptr.dir/main.cpp.s"
+CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/binary_tree_with_unique_ptr.dir/tree.cpp.s"
 	C:\PROGRA~2\MICROS~1\2019\COMMUN~1\VC\Tools\MSVC\1426~1.288\bin\Hostx86\x86\cl.exe @<<
- /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.s /c C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\main.cpp
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.s /c C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\tree.cpp
 <<
 
 # Object files for target binary_tree_with_unique_ptr
 binary_tree_with_unique_ptr_OBJECTS = \
-"CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.obj"
+"CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.obj"
 
 # External object files for target binary_tree_with_unique_ptr
 binary_tree_with_unique_ptr_EXTERNAL_OBJECTS =
 
-binary_tree_with_unique_ptr.exe: CMakeFiles\binary_tree_with_unique_ptr.dir\main.cpp.obj
+binary_tree_with_unique_ptr.exe: CMakeFiles\binary_tree_with_unique_ptr.dir\tree.cpp.obj
 binary_tree_with_unique_ptr.exe: CMakeFiles\binary_tree_with_unique_ptr.dir\build.make
 binary_tree_with_unique_ptr.exe: CMakeFiles\binary_tree_with_unique_ptr.dir\objects1.rsp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\yambo\CLionProjects\repositories\solved_problems\YandexPractikum\10th_sprint\binary_tree_with_unique_ptr\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable binary_tree_with_unique_ptr.exe"

@@ -82,7 +82,7 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/main.cpp">
+		<Unit filename="C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/tree.cpp">
 			<Option target="binary_tree_with_unique_ptr"/>
 		</Unit>
 		<Unit filename="C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/CMakeLists.txt">
