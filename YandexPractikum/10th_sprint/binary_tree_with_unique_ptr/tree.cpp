@@ -65,31 +65,20 @@ TreeNode<T>* next(TreeNode<T>* node) noexcept {
 
 // функция создаёт новый узел с заданным значением и потомками
 TreeNodePtr<int> N(int val, TreeNodePtr<int>&& left = {}, TreeNodePtr<int>&& right = {}) {
-    if (!left && !right) {
-        return std::make_unique<TreeNode<int>>(val, nullptr, nullptr);
-    } else if (!left) {
-        if (right->parent != nullptr) {
+    TreeNodePtr<int> result = std::make_unique<TreeNode<int>>(val, move(left), move(right));
+    if (result->left) {
+        if (result->left->parent != nullptr) {
             throw std::invalid_argument("input nodes should not have parent");
         }
-        TreeNodePtr<int> result = std::make_unique<TreeNode<int>>(val, nullptr, move(right));
-        result->right->parent = result.get();
-        return result;
-    } else if (!right) {
-        if (left->parent != nullptr) {
-            throw std::invalid_argument("input nodes should not have parent");
-        }
-        TreeNodePtr<int> result = std::make_unique<TreeNode<int>>(val, move(left), nullptr);
         result->left->parent = result.get();
-        return result;
-    } else {
-        if (left->parent != nullptr || right->parent != nullptr) {
-            throw std::invalid_argument("input nodes should not have parent");
-        }
-        TreeNodePtr<int> result = std::make_unique<TreeNode<int>>(val, move(left), move(right));
-        result->left->parent = result.get();
-        result->right->parent = result.get();
-        return result;
     }
+    if (result->right) {
+        if (result->right->parent != nullptr) {
+            throw std::invalid_argument("input nodes should not have parent");
+        }
+        result->right->parent = result.get();
+    }
+    return result;
 }
 
 int main() {
