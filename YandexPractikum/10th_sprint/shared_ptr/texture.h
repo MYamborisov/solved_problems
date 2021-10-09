@@ -8,14 +8,11 @@ public:
     }
 
     Size GetSize() const {
-        // Заглушка. Реализуйте метод самостоятельно
-        return {0, 0};
+        return GetImageSize(image_);
     }
 
     char GetPixelColor(Point p) const {
-        (void) p;
-        // Заглушка. Реализуйте метод самостоятельно
-        return ' ';
+        return image_[p.y][p.x];
     }
 
 private:
