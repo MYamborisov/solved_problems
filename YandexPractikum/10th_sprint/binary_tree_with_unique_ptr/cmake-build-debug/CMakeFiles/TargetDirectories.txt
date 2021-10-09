@@ -1,3 +1,0 @@
-C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/cmake-build-debug/CMakeFiles/binary_tree_with_unique_ptr.dir
-C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/yambo/CLionProjects/repositories/solved_problems/YandexPractikum/10th_sprint/binary_tree_with_unique_ptr/cmake-build-debug/CMakeFiles/rebuild_cache.dir
