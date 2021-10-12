@@ -4,6 +4,42 @@ namespace svg {
 
     using namespace std::literals;
 
+    std::ostream& operator<<(std::ostream& out, StrokeLineCap value) {
+        switch (value) {
+            case StrokeLineCap::BUTT:
+                out << "butt";
+                break;
+            case StrokeLineCap::ROUND:
+                out << "round";
+                break;
+            case StrokeLineCap::SQUARE:
+                out << "square";
+                break;
+        }
+        return out;
+    }
+
+    std::ostream& operator<<(std::ostream& out, StrokeLineJoin value) {
+        switch (value) {
+            case StrokeLineJoin::ARCS:
+                out << "arcs";
+                break;
+            case StrokeLineJoin::BEVEL:
+                out << "bevel";
+                break;
+            case StrokeLineJoin::MITER:
+                out << "miter";
+                break;
+            case StrokeLineJoin::MITER_CLIP:
+                out << "miter-clip";
+                break;
+            case StrokeLineJoin::ROUND:
+                out << "round";
+                break;
+        }
+        return out;
+    }
+
     void Object::Render(const RenderContext& context) const {
         context.RenderIndent();
 
@@ -28,7 +64,8 @@ namespace svg {
     void Circle::RenderObject(const RenderContext& context) const {
         auto& out = context.out;
         out << "<circle cx=\""sv << center_.x << "\" cy=\""sv << center_.y << "\" "sv;
-        out << "r=\""sv << radius_ << "\" "sv;
+        out << "r=\""sv << radius_ << "\""sv;
+        RenderAttrs(context.out);
         out << "/>"sv;
     }
 
@@ -48,7 +85,9 @@ namespace svg {
                 out << " "sv;
             }
         }
-        out << "\" />"sv;
+        out << "\""sv;
+        RenderAttrs(context.out);
+        out << "/>"sv;
     }
 
 // ---------- Text ------------------
@@ -92,6 +131,7 @@ namespace svg {
         if (!font_weight_.empty()) {
             out << " font-weight=\"" << font_weight_ << "\"";
         }
+        RenderAttrs(context.out);
         out << '>';
         for (const auto& symbol : data_) {
             if (symbol == '"') {
