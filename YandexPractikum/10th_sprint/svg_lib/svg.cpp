@@ -4,6 +4,26 @@ namespace svg {
 
     using namespace std::literals;
 
+    Rgb::Rgb(uint8_t r, uint8_t g, uint8_t b) : red(r), green(g), blue(b) {}
+
+    Rgba::Rgba(uint8_t r, uint8_t g, uint8_t b, double op) : red(r), green(g), blue(b), opacity(op) {}
+
+    void ColorPrinter::operator()(std::monostate) const {
+        out << "none"s;
+    }
+
+    void ColorPrinter::operator()(const std::string& color) const {
+        out << color;
+    }
+
+    void ColorPrinter::operator()(Rgb color) const {
+        out << "rgb("s << static_cast<unsigned>(color.red) << ',' << static_cast<unsigned>(color.green) << ',' << static_cast<unsigned>(color.blue) << ')';
+    }
+
+    void ColorPrinter::operator()(Rgba color) const {
+        out << "rgba("s << static_cast<unsigned>(color.red) << ',' << static_cast<unsigned>(color.green) << ',' << static_cast<unsigned>(color.blue) << ',' << color.opacity << ')';
+    }
+
     std::ostream& operator<<(std::ostream& out, StrokeLineCap value) {
         switch (value) {
             case StrokeLineCap::BUTT:

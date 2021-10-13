@@ -3,19 +3,46 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
-#include <string>
-#include <vector>
 #include <optional>
+#include <string>
+#include <variant>
+#include <vector>
+
 
 namespace svg {
 
-    using Color = std::string;
+    struct Rgb {
+        Rgb() = default;
+        Rgb(uint8_t r, uint8_t g, uint8_t b);
+        uint8_t red = 0;
+        uint8_t green = 0;
+        uint8_t blue = 0;
+    };
+
+    struct Rgba {
+        Rgba() = default;
+        Rgba(uint8_t r, uint8_t g, uint8_t b, double op);
+        uint8_t red = 0;
+        uint8_t green = 0;
+        uint8_t blue = 0;
+        double opacity = 1.0;
+    };
+
+    using Color = std::variant<std::monostate, std::string, svg::Rgb, svg::Rgba>;
 
     // Объявив в заголовочном файле константу со спецификатором inline,
     // мы сделаем так, что она будет одной на все единицы трансляции,
     // которые подключают этот заголовок.
     // В противном случае каждая единица трансляции будет использовать свою копию этой константы
     inline const Color NoneColor{"none"};
+
+    struct ColorPrinter {
+        std::ostream& out;
+        void operator()(std::monostate) const;
+        void operator()(const std::string& color) const;
+        void operator()(Rgb color) const;
+        void operator()(Rgba color) const;
+    };
 
     enum class StrokeLineCap {
         BUTT,
@@ -76,10 +103,14 @@ namespace svg {
             using namespace std::literals;
 
             if (fill_color_) {
-                out << " fill=\""sv << *fill_color_ << "\""sv;
+                out << " fill=\""sv;
+                visit(ColorPrinter{out}, *fill_color_);
+                out << "\""sv;
             }
             if (stroke_color_) {
-                out << " stroke=\""sv << *stroke_color_ << "\""sv;
+                out << " stroke=\""sv;
+                visit(ColorPrinter{out}, *stroke_color_);
+                out << "\""sv;
             }
             if (stroke_width_) {
                 out << " stroke-width=\""sv << *stroke_width_ << "\""sv;
