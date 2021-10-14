@@ -207,59 +207,35 @@ namespace json {
     // Node Is* functions :
 
     bool Node::IsNull() const {
-        if (std::holds_alternative<nullptr_t>(data_)) {
-            return true;
-        }
-        return false;
+        return std::holds_alternative<nullptr_t>(data_);
     }
 
     bool Node::IsInt() const {
-        if (std::holds_alternative<int>(data_)) {
-            return true;
-        }
-        return false;
+        return std::holds_alternative<int>(data_);
     }
 
     bool Node::IsDouble() const {
-        if (std::holds_alternative<double>(data_) || IsInt()) {
-            return true;
-        }
-        return false;
+        return std::holds_alternative<double>(data_) || IsInt();
     }
 
     bool Node::IsPureDouble() const {
-        if (std::holds_alternative<double>(data_)) {
-            return true;
-        }
-        return false;
+        return std::holds_alternative<double>(data_);
     }
 
     bool Node::IsString() const {
-        if (std::holds_alternative<std::string>(data_)) {
-            return true;
-        }
-        return false;
+        return std::holds_alternative<std::string>(data_);
     }
 
     bool Node::IsBool() const {
-        if (std::holds_alternative<bool>(data_)) {
-            return true;
-        }
-        return false;
+        return std::holds_alternative<bool>(data_);
     }
 
     bool Node::IsArray() const {
-        if (std::holds_alternative<Array>(data_)) {
-            return true;
-        }
-        return false;
+        return std::holds_alternative<Array>(data_);
     }
 
     bool Node::IsMap() const {
-        if (std::holds_alternative<Dict>(data_)) {
-            return true;
-        }
-        return false;
+        return std::holds_alternative<Dict>(data_);
     }
 
     // Node As* functions and getter :
@@ -269,7 +245,7 @@ namespace json {
     }
 
     const Array &Node::AsArray() const {
-        if (std::holds_alternative<Array>(data_)) {
+        if (IsArray()) {
             return get<Array>(data_);
         } else {
             throw logic_error("Try to access to non array value with 'AsArray'");
@@ -277,7 +253,7 @@ namespace json {
     }
 
     const Dict &Node::AsMap() const {
-        if (std::holds_alternative<Dict>(data_)) {
+        if (IsMap()) {
             return get<Dict>(data_);
         } else {
             throw logic_error("Try to access to non dict value with 'AsDict'");
@@ -285,7 +261,7 @@ namespace json {
     }
 
     const std::string &Node::AsString() const {
-        if (std::holds_alternative<string>(data_)) {
+        if (IsString()) {
             return get<string>(data_);
         } else {
             throw logic_error("Try to access to non string value with 'AsString'");
@@ -293,7 +269,7 @@ namespace json {
     }
 
     int Node::AsInt() const {
-        if (std::holds_alternative<int>(data_)) {
+        if (IsInt()) {
             return get<int>(data_);
         } else {
             throw logic_error("Try to access to non int value with 'AsInt'");
@@ -301,9 +277,9 @@ namespace json {
     }
 
     double Node::AsDouble() const {
-        if (std::holds_alternative<double>(data_)) {
+        if (IsPureDouble()) {
             return get<double>(data_);
-        } else if (std::holds_alternative<int>(data_)) {
+        } else if (IsInt()) {
             return get<int>(data_);
         } else {
             throw logic_error("Try to access to non double value with 'AsDouble'");
@@ -311,7 +287,7 @@ namespace json {
     }
 
     bool Node::AsBool() const {
-        if (std::holds_alternative<bool>(data_)) {
+        if (IsBool()) {
             return get<bool>(data_);
         } else {
             throw logic_error("Try to access to non bool value with 'AsBool'");
