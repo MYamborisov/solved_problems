@@ -106,10 +106,6 @@ void TestStrings() {
     assert(!str_node.IsInt());
     assert(!str_node.IsDouble());
 
-    std::cout << Print(str_node) << std::endl;
-
-    std::cout << "\"Hello, \\\"everybody\\\"\""s;
-
     assert(Print(str_node) == "\"Hello, \\\"everybody\\\"\""s);
 
     assert(LoadJSON(Print(str_node)).GetRoot() == str_node);

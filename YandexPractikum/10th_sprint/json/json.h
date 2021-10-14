@@ -50,6 +50,7 @@ namespace json {
         NodeData GetData() const;
 
         friend bool operator==(const Node& left, const Node& right);
+
         friend bool operator!=(const Node& left, const Node& right);
 
     private:

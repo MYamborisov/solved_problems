@@ -6,6 +6,8 @@ namespace json {
 
     namespace {
 
+        // Load functions :
+
         Node LoadNode(istream& input);
 
         Node LoadArray(istream& input) {
@@ -134,12 +136,11 @@ namespace json {
 
         Node LoadDict(istream& input) {
             Dict result;
-            char c  = '!';
+            char c = '!'; // Initialize to compare with '}'
             for (; input >> c && c != '}';) {
                 if (c == ',') {
                     input >> c;
                 }
-
                 string key = LoadString(input).AsString();
                 input >> c;
                 result.insert({move(key), LoadNode(input)});
@@ -150,42 +151,26 @@ namespace json {
             return Node(move(result));
         }
 
-        Node LoadNull(istream& input) {
+        Node LoadNullOrBool(istream& input) {
             std::string result;
+            size_t size;
+            if (input.peek() == 'f') {
+                size = 5;
+            } else {
+                size = 4;
+            }
             char c;
-            for (int i = 0; i < 4; ++i) {
-                if(!(input >> c)) {
-                    throw ParsingError("Failed to read null");
-                }
-                result.push_back(c);
+            for (size_t i = 0; input >> c && i < size; ++i) {
+                result += c;
             }
             if (result == "null"s) {
-                return Node(nullptr);
-            } else {
-                throw ParsingError("Failed to read null");
-            }
-        }
-
-        Node LoadBool(istream& input) {
-            std::string result;
-            char c;
-            int n;
-            input >> c;
-            result.push_back(c);
-            if (c == 't')
-                n = 3;
-            else
-                n = 4;
-            for (int i = 0; i < n; ++i) {
-                input >> c;
-                result.push_back(c);
-            }
-            if (result == "true"s) {
-                return Node(true);
+                return {nullptr};
+            } else if (result == "true"s) {
+                return {true};
             } else if (result == "false"s) {
-                return Node(false);
+                return {false};
             } else {
-                throw ParsingError("Failed to read bool");
+                throw ParsingError("Failed to read null or bool");
             }
         }
 
@@ -199,19 +184,17 @@ namespace json {
                 return LoadDict(input);
             } else if (c == '"') {
                 return LoadString(input);
-            } else if (c == 'n') {
+            } else if (c == 'n' || c == 't' || c == 'f') {
                 input.putback(c);
-                return LoadNull(input);
-            } else if (c == 't' || c == 'f') {
-                input.putback(c);
-                return LoadBool(input);
+                return LoadNullOrBool(input);
             } else {
                 input.putback(c);
                 return LoadNumber(input);
             }
         }
-
     }  // namespace
+
+    // Node constructors :
 
     Node::Node(bool value) : data_(value) {}
     Node::Node(std::nullptr_t /* value*/) : Node() {}
@@ -221,9 +204,7 @@ namespace json {
     Node::Node(Dict map) : data_(std::move(map)) {}
     Node::Node(Array array) : data_(std::move(array)) {}
 
-    NodeData Node::GetData() const {
-        return data_;
-    }
+    // Node Is* functions :
 
     bool Node::IsNull() const {
         if (std::holds_alternative<nullptr_t>(data_)) {
@@ -281,6 +262,12 @@ namespace json {
         return false;
     }
 
+    // Node As* functions and getter :
+
+    NodeData Node::GetData() const {
+        return data_;
+    }
+
     const Array &Node::AsArray() const {
         if (std::holds_alternative<Array>(data_)) {
             return get<Array>(data_);
@@ -331,6 +318,8 @@ namespace json {
         }
     }
 
+    // operators == and != :
+
     bool operator==(const Document& left, const Document& right) {
         return left.GetRoot() == right.GetRoot();
     }
@@ -347,6 +336,8 @@ namespace json {
         return !(left == right);
     }
 
+    // Document constructor and functions
+
     Document::Document(Node root)
             : root_(move(root)) {
     }
@@ -359,15 +350,66 @@ namespace json {
         return Document{LoadNode(input)};
     }
 
+    // printer functions:
+
+    void PrintNode(const Node& node, std::ostream& out);
+
     struct NodePrinter {
         std::ostream& out;
-        void operator()(std::nullptr_t) const;
-        void operator()(Array array) const;
-        void operator()(Dict dict) const;
-        void operator()(bool boolean) const;
-        void operator()(int integer) const;
-        void operator()(double real) const;
-        void operator()(std::string str) const;
+        void operator()(std::nullptr_t) const {
+            out << "null"s;
+        }
+        void operator()(Array array) const {
+            int size = array.size() - 1;
+            out << '[';
+            for (const Node& node : array) {
+                PrintNode(node, out);
+                if (size > 0) {
+                    out << ',';
+                    --size;
+                }
+            }
+            out << ']';
+        }
+        void operator()(Dict dict) const {
+            int size =  dict.size() - 1;
+            out << '{';
+            for (const auto& [key, node] : dict) {
+                out << '"' << key << "\": ";
+                PrintNode(node, out);
+                if (size > 0) {
+                    out << ',';
+                    --size;
+                }
+            }
+            out << '}';
+        }
+        void operator()(bool boolean) const {
+            if (boolean) {
+                out << "true"s;
+            } else {
+                out << "false"s;
+            }
+        }
+        void operator()(int integer) const {
+            out << integer;
+        }
+        void operator()(double real) const {
+            out << real;
+        }
+        void operator()(const std::string& str) const {
+            out << '"';
+            for (const auto& symbol : str) {
+                if (symbol == '\"') {
+                    out << '\\' << '\"';
+                } else if (symbol == '\\') {
+                    out << '\\' << '\\';
+                } else {
+                    out << symbol;
+                }
+            }
+            out << '"';
+        }
     };
 
     void PrintNode(const Node& node, std::ostream& out) {
@@ -377,68 +419,4 @@ namespace json {
     void Print(const Document& doc, std::ostream& output) {
         PrintNode(doc.GetRoot(), output);
     }
-
-    void NodePrinter::operator()(std::nullptr_t) const {
-        out << "null"s;
-    }
-
-    void NodePrinter::operator()(bool boolean) const {
-        if (boolean) {
-            out << "true"s;
-        } else {
-            out << "false"s;
-        }
-    }
-
-    void NodePrinter::operator()(int integer) const {
-        out << integer;
-    }
-
-    void NodePrinter::operator()(double real) const {
-        out << real;
-    }
-
-    void NodePrinter::operator()(std::string str) const { //TODO try to optimize string
-        std::string with_esc;
-        for (auto now : str) {
-            if (now == '\"') {
-                with_esc.push_back('\\');
-                with_esc.push_back('\"');
-            } else if (now == '\\') {
-                with_esc.push_back('\\');
-                with_esc.push_back('\\');
-            } else {
-                with_esc.push_back(now);
-            }
-        }
-        out << '"' << with_esc << '"';
-    }
-
-    void NodePrinter::operator()(Array array) const {
-        int size = array.size() - 1;
-        out << '[';
-        for (const Node& node : array) {
-            PrintNode(node, out);
-            if (size > 0) {
-                out << ',';
-                --size;
-            }
-        }
-        out << ']';
-    }
-
-    void NodePrinter::operator()(Dict dict) const {
-        int size =  dict.size() - 1;
-        out << '{';
-        for (const auto& [key, node] : dict) {
-            out << '"' << key << "\": ";
-            PrintNode(node, out);
-            if (size > 0) {
-                out << ',';
-                --size;
-            }
-        }
-        out << '}';
-    }
-
 }  // namespace json
