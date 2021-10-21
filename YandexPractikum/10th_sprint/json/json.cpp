@@ -160,7 +160,7 @@ namespace json {
                 size = 4;
             }
             char c;
-            for (size_t i = 0; input >> c && i < size; ++i) {
+            for (size_t i = 0; i < size && input >> c; ++i) {
                 result += c;
             }
             if (result == "null"s) {
@@ -380,6 +380,8 @@ namespace json {
                     out << '\\' << '\"';
                 } else if (symbol == '\\') {
                     out << '\\' << '\\';
+                } else if (symbol == '\n') {
+                    out << '\\' << 'n';
                 } else {
                     out << symbol;
                 }
