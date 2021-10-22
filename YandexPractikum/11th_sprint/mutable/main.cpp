@@ -8,7 +8,7 @@ using namespace std;
 template <typename T>
 class LazyValue {
 public:
-    explicit LazyValue(function<T()> init) : init_(init) {}
+    explicit LazyValue(function<T()> init) : init_(move(init)) {}
 
     bool HasValue() const {
         return value_.has_value();
