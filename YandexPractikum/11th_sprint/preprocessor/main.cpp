@@ -19,12 +19,13 @@ path operator""_p(const char* data, std::size_t sz) {
 }
 bool IncludeParse(std::ifstream& in, std::ofstream& out, const path& current, const vector<path>& include_directories);
 
-bool AfterFindFile(std::ofstream& out, const path& current, const path& p, bool& flag, const vector<path>& include_directories, int & cntr) {
+bool AfterFindFile(std::ofstream& out, const path& p, bool& flag, const vector<path>& include_directories) {
     flag = true;
-    std::ifstream in(p, std::ios::in | std::ios::binary);
-    if (!in) {
-        cout << "unknown include file " << p.string() <<" at file " << current.string() << " at line " << cntr << endl;
-        return false;
+    std::ifstream in;
+    while (!in.is_open()) {
+        //cout << "unknown include file " << p.string() <<" at file " << current.string() << " at line " << cntr << endl;
+        //return false;
+        in.open(p, std::ios::in | std::ios::binary);
     }
     return IncludeParse(in ,out, p, include_directories);
 }
@@ -42,19 +43,22 @@ bool IncludeParse(std::ifstream& in, std::ofstream& out, const path& current, co
             for (auto now : filesystem::recursive_directory_iterator(dir)) {
                 path pth = (dir / p);
                 if (now.path() == pth) {
-                    bool aff = AfterFindFile(out, current, pth, flag, include_directories, cntr);
+                    bool aff = AfterFindFile(out, pth, flag, include_directories);
                     if (!aff)
                         return false;
+                    break;
                 }
             }
             if (!flag) {
                 for (auto now_ : include_directories) {
-                    for (auto now : filesystem::recursive_directory_iterator(now_)) {
-                        path pth = (now_ / p);
-                        if (now.path() == pth) {
-                            bool aff = AfterFindFile(out, current, pth, flag, include_directories, cntr);
-                            if (!aff)
-                                return false;
+                    if (exists(now_)) {
+                        for (auto now: filesystem::recursive_directory_iterator(now_)) {
+                            path pth = (now_ / p);
+                            if (now.path() == pth) {
+                                bool aff = AfterFindFile(out, pth, flag, include_directories);
+                                if (!aff)
+                                    return false;
+                            }
                         }
                     }
                 }
@@ -71,9 +75,10 @@ bool IncludeParse(std::ifstream& in, std::ofstream& out, const path& current, co
                     for (auto now : filesystem::recursive_directory_iterator(now_)) {
                         path pth = (now_ / p);
                         if (now.path() == pth) {
-                            bool aff = AfterFindFile(out, current, pth, flag, include_directories, cntr);
+                            bool aff = AfterFindFile(out, pth, flag, include_directories);
                             if (!aff)
                                 return false;
+                            break;
                         }
                     }
                 }
@@ -177,6 +182,7 @@ void Test() {
 
     assert(GetFileContents("sources/a.in"s) == test_out.str());
 }
+
 
 int main() {
     Test();
