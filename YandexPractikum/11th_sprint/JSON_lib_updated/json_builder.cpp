@@ -1,13 +1,77 @@
 #include "json_builder.h"
 
 namespace json {
+
+    // BaseContext
+    BaseContext::BaseContext(Builder &builder) : builder_(builder) {}
+
+    DictItemContext BaseContext::StartDict() {
+        return builder_.StartDict();
+    }
+
+    ArrayItemContext BaseContext::StartArray() {
+        return builder_.StartArray();
+    }
+
+    Builder &BaseContext::EndArray() {
+        return builder_.EndArray();
+    }
+
+    Builder &BaseContext::EndDict() {
+        return builder_.EndDict();
+    }
+
+    KeyItemContext BaseContext::Key(std::string key) {
+        return builder_.Key(move(key));
+    }
+
+    Builder &BaseContext::Value(Node value) {
+        return builder_.Value(move(value));
+    }
+
+    // KeyItemContext
+
+    KeyItemContext::KeyItemContext(Builder &builder) : BaseContext(builder) {}
+
+    KeyValueItemContext KeyItemContext::Value(Node value) {
+        return BaseContext::Value(move(value));
+    }
+
+    // KeyValueItemContext
+
+    KeyValueItemContext::KeyValueItemContext(Builder &builder) : BaseContext(builder) {}
+
+
+    // DictItemContext
+
+    DictItemContext::DictItemContext(Builder &builder) : BaseContext(builder) {}
+
+
+    // ArrayItemContext
+
+    ArrayItemContext::ArrayItemContext(Builder &builder) : BaseContext(builder) {}
+
+    ArrayValueItemContext ArrayItemContext::Value(Node value) {
+        return BaseContext::Value(move(value));
+    }
+
+    // ArrayValueItemContext
+
+    ArrayValueItemContext::ArrayValueItemContext(Builder &builder) : BaseContext(builder) {}
+
+    ArrayValueItemContext ArrayValueItemContext::Value(Node value) {
+        return BaseContext::Value(move(value));
+    }
+
+    // Builder
+
     Builder::Builder() {
         nodes_stack_.push_back(&root_);
     }
 
-    Builder &Builder::StartDict() {
+    DictItemContext Builder::StartDict() {
         if (nodes_stack_.empty() || (!nodes_stack_.back()->IsNull() && !nodes_stack_.back()->IsArray())) {
-            throw std::logic_error("Try to build before object is ready");
+            throw std::logic_error("Try to start Dict in empty object or not in Array and Node");
         }
         if (nodes_stack_.back()->IsArray()) {
             const_cast<Array &>(nodes_stack_.back()->AsArray()).push_back(Dict());
@@ -19,9 +83,9 @@ namespace json {
         return *this;
     }
 
-    Builder &Builder::StartArray() {
+    ArrayItemContext Builder::StartArray() {
         if (nodes_stack_.empty() || (!nodes_stack_.back()->IsNull() && !nodes_stack_.back()->IsArray())) {
-            throw std::logic_error("Try to build before object is ready");
+            throw std::logic_error("Try to start Array in empty object or not in Array and Node");
         }
         if (nodes_stack_.back()->IsArray()) {
             const_cast<Array &>(nodes_stack_.back()->AsArray()).push_back(Array());
@@ -35,7 +99,7 @@ namespace json {
 
     Builder &Builder::EndDict() {
         if (nodes_stack_.empty() || !nodes_stack_.back()->IsDict()) {
-            throw std::logic_error("Try to build before object is ready");
+            throw std::logic_error("Try to end Dict in empty object or not in Dict");
         }
         nodes_stack_.erase(nodes_stack_.end() - 1);
         return *this;
@@ -43,15 +107,15 @@ namespace json {
 
     Builder &Builder::EndArray() {
         if (nodes_stack_.empty() || !nodes_stack_.back()->IsArray()) {
-            throw std::logic_error("Try to build before object is ready");
+            throw std::logic_error("Try to end Array in empty object or not in Array");
         }
         nodes_stack_.erase(nodes_stack_.end() - 1);
         return *this;
     }
 
-    Builder &Builder::Key(std::string key) {
+    KeyItemContext Builder::Key(std::string key) {
         if (nodes_stack_.empty() || !nodes_stack_.back()->IsDict()) {
-            throw std::logic_error("Try to build before object is ready");
+            throw std::logic_error("Try to insert Key in ready object or not in Dict");
         }
         nodes_stack_.emplace_back(&const_cast<Dict&>(nodes_stack_.back()->AsDict())[key]);
         return *this;
@@ -59,7 +123,7 @@ namespace json {
 
     Builder &Builder::Value(Node value) {
         if (nodes_stack_.empty() || (!nodes_stack_.back()->IsNull() && !nodes_stack_.back()->IsArray())) {
-            throw std::logic_error("Try to build before object is ready");
+            throw std::logic_error("Try add Value in ready object or not in Node and Array");
         }
         if (nodes_stack_.back()->IsArray()) {
             const_cast<Array &>(nodes_stack_.back()->AsArray()).push_back(value);
