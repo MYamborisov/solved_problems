@@ -14,14 +14,14 @@ public:
         }
         id_to_pages_[user] = page;
     }
-    double Cheer(int user) {
+    double Cheer(int user) const {
         if (id_to_pages_.count(user) == 0) {
             return 0;
         }
         if (id_to_pages_.size() == 1) {
             return 1;
         }
-        return (id_to_pages_.size() - read_at_least_[id_to_pages_[user]]) / static_cast<double>(id_to_pages_.size() - 1);
+        return (id_to_pages_.size() - read_at_least_[id_to_pages_.at(user)]) / static_cast<double>(id_to_pages_.size() - 1);
     }
 private:
     array<int, MAX_PAGES + 1> read_at_least_ = {};
