@@ -1,11 +1,47 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <memory>
 
 using namespace std;
 
+class AnyStorageBase {
+public:
+    virtual void Print(ostream& out) const = 0;
+    virtual ~AnyStorageBase() = default;
+};
+
+class Any;
+
+template <typename T>
+class AnyStorage: public AnyStorageBase {
+public:
+    AnyStorage(T&& data) : data_(move(data)) {}
+
+    AnyStorage(const T& data) : data_(data) {}
+
+    void Print(ostream& out) const override {
+        out << data_;
+    }
+
+private:
+    T data_;
+};
+
 class Any {
-// разработайте класс
+public:
+    template <typename S>
+    Any(S&& type) {
+        using Initial = std::remove_reference_t<S>;
+        ptr_ = std::make_unique<AnyStorage<Initial>>(std::forward<S>(type));
+    }
+
+    void Print(ostream& out) const {
+        ptr_->Print(out);
+    }
+
+private:
+    unique_ptr<AnyStorageBase> ptr_;
 };
 
 class Dumper {
@@ -48,8 +84,13 @@ int main() {
     // операция вывода Any в поток определена чуть выше в примере
     cout << any_int << endl << any_string << endl;
 
+    cout << "____First____" << endl;
+
     Any any_dumper_temp{Dumper()};
+    cout << "____Second____" << endl;
 
     Dumper auto_dumper;
+    cout << "____Third____" << endl;
     Any any_dumper_auto(auto_dumper);
+    cout << "____Fourth____" << endl;
 }
