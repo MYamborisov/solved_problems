@@ -3,6 +3,7 @@
 
 struct DayEarnings{
     double earnings = 0;
+    double spendings = 0;
 };
 
 class BudgetManager {
@@ -18,7 +19,9 @@ public:
 
     void Earn(Date from, Date to, double earnings);
 
-    void PayTax(Date from, Date to);
+    void PayTax(Date from, Date to, int tax);
+
+    void Spend(Date from, Date to, double spendings);
 
 private:
     std::vector<DayEarnings> earnings_per_day_;

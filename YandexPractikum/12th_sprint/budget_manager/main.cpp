@@ -8,13 +8,15 @@
 using namespace std;
 
 void ParseAndProcessQuery(BudgetManager& manager, string_view line) {
-    auto [request, date_from, date_to, opt_earn] = ParseRequestLine(line);
+    auto [request, date_from, date_to, opt_value] = ParseRequestLine(line);
     if (request == RequestType::COMPUTE_INCOME) {
         cout << manager.ComputeIncome(date_from, date_to) << endl;
     } else if (request == RequestType::EARN) {
-        manager.Earn(date_from, date_to, opt_earn.value());
+        manager.Earn(date_from, date_to, opt_value.value());
     } else if (request == RequestType::PAY_TAX) {
-        manager.PayTax(date_from, date_to);
+        manager.PayTax(date_from, date_to, opt_value.value() + 0.5);    // add 0.5 to for correct conversion double to int
+    } else if (request == RequestType::SPEND) {
+        manager.Spend(date_from, date_to, opt_value.value());
     }
 }
 

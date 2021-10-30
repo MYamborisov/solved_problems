@@ -6,7 +6,8 @@
 enum RequestType {
     COMPUTE_INCOME,
     EARN,
-    PAY_TAX
+    PAY_TAX,
+    SPEND
 };
 
 std::tuple<RequestType, Date, Date, std::optional<double>> ParseRequestLine(std::string_view line);
