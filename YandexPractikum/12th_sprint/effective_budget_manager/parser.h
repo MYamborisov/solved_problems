@@ -13,10 +13,10 @@
 
 struct ReadResult {
     void Print(std::ostream& out) {
-        out << total_income << std::endl;
+        out << total.income - total.spent << std::endl;
     }
 
-    double total_income;
+    Day total;
 };
 
 inline std::pair<std::string_view, std::optional<std::string_view>> SplitFirst(std::string_view input, char c) {
@@ -45,8 +45,8 @@ public:
     virtual ~Query() = default;
 
     Query(Date from, Date to)
-        : from_(from)
-        , to_(to) {
+            : from_(from)
+            , to_(to) {
     }
 
     Date GetFrom() const {

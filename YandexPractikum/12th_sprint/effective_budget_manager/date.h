@@ -9,9 +9,9 @@ public:
     Date() {
     }
     Date(int year, int month, int day)
-        : year_(year)
-        , month_(month)
-        , day_(day) {
+            : year_(year)
+            , month_(month)
+            , day_(day) {
     }
 
     // тут правильно использовать string_view, но regex его пока не поддерживает

@@ -4,6 +4,10 @@
 
 using namespace std;
 
+Day operator+(Day lhs, Day rhs) {
+    return {lhs.income + rhs.income, lhs.spent + rhs.spent};
+}
+
 void ParseAndProcessQuery(BudgetManager& manager, string_view line) {
     auto query = ParseQuery(line);
 

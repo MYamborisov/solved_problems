@@ -27,7 +27,7 @@ template <typename Data, typename BulkOperation>
 class SummingSegmentTree {
 public:
     SummingSegmentTree(size_t size)
-        : root_(Build({0, size})) {
+            : root_(Build({0, size})) {
     }
 
     Data ComputeSum(IndexSegment segment) const {
@@ -58,7 +58,7 @@ private:
         } else {
             const size_t middle = segment.left + segment.length() / 2;
             return std::make_unique<Node>(
-                Node{Build({segment.left, middle}), Build({middle, segment.right}), segment, {}, {}});
+                    Node{Build({segment.left, middle}), Build({middle, segment.right}), segment, {}, {}});
         }
     }
 
@@ -107,7 +107,7 @@ private:
         using ResultType = void;
 
         explicit AddBulkOperationVisitor(const BulkOperation& operation)
-            : operation_(operation) {
+                : operation_(operation) {
         }
 
         void ProcessEmpty(const NodeHolder&) const {
