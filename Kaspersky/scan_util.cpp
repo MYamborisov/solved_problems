@@ -29,9 +29,10 @@ void PrintScanResult(const ScanStatistics& scan_statistics, ostream& output) {
     output << "CMD detects: "sv << scan_statistics.cmd_detects << endl << endl;
     output << "EXE detects: "sv << scan_statistics.exe_detects << endl << endl;
     output << "Errors: "sv << scan_statistics.errors << endl << endl;
-    output << "Execution time: "sv << scan_statistics.execution_time.count() / 3600 << ':'
-                                   << scan_statistics.execution_time.count() / 60 % 60 << ':'
-                                   << scan_statistics.execution_time.count() % 60 << endl << endl;
+    output << "Execution time: "sv
+            << std::setfill('0') << std::setw(2) << scan_statistics.execution_time.count() / 3600 << ':'
+            << std::setfill('0') << std::setw(2) << scan_statistics.execution_time.count() / 60 % 60 << ':'
+            << std::setfill('0') << std::setw(2) << scan_statistics.execution_time.count() % 60 << endl << endl;
     output << "========================="sv << endl;
 }
 
@@ -94,6 +95,10 @@ void ScanFolder(const path& suspicious_folder, ostream& output) {
     PrintScanResult(scan_statistics, output);
 }
 
-int main() {
-    ScanFolder("C:\\Users\\yambo\\Downloads\\Susp_folder", cout);
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        cout << "You must specify the path only"sv << endl;
+        return 0;
+    }
+    ScanFolder(argv[1], cout);
 }
