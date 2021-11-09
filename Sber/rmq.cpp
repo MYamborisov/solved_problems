@@ -1,3 +1,5 @@
+#include "rmq_tests.h"
+
 #include <iostream>
 #include <vector>
 #include <deque>
@@ -20,19 +22,22 @@ void Solution(const vector<int>& numbers, istream& in, ostream& out) {
                 possible_max.pop_front();
             }
         } else if (cmd == "R") {
-            int new_val = numbers[++R];
+            Num new_val;
+            new_val.value = numbers[++R];
+            new_val.pos = R;
             auto it = (upper_bound(possible_max.rbegin(), possible_max.rend(), new_val, [](const Num& lhs, const Num& rhs){
                 return lhs.value < rhs.value;
             }));
             int dist =  distance(possible_max.rbegin(), it);
             possible_max.erase(possible_max.end() - dist, possible_max.end());
-            possible_max.emplace_back(R, new_val);
+            possible_max.push_back(new_val);
         }
         out << possible_max.front().value << endl;
     }
 }
 
 int main() {
+    Tests();
     int n;
     cin >> n;
     vector<int> numbers(n);
