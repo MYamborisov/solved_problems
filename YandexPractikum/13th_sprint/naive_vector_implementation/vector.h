@@ -16,6 +16,23 @@ public:
             , capacity_(capacity) {
     }
 
+    RawMemory(const RawMemory&) = delete;
+    RawMemory& operator=(const RawMemory& rhs) = delete;
+    RawMemory(RawMemory&& other) noexcept {
+        buffer_ = std::move(other.buffer_);
+        capacity_ = std::move(other.capacity_);
+        other.capacity_ = 0;
+        other.buffer_ = nullptr;
+    }
+    RawMemory& operator=(RawMemory&& rhs) noexcept {
+        Deallocate(buffer_);
+        buffer_ = std::move(rhs.buffer_);
+        capacity_ = std::move(rhs.capacity_);
+        rhs.capacity_ = 0;
+        rhs.buffer_ = nullptr;
+        return *this;
+    }
+
     ~RawMemory() {
         Deallocate(buffer_);
     }
@@ -90,6 +107,12 @@ public:
         std::uninitialized_copy_n(other.data_.GetAddress(), other.size_, data_.GetAddress());
     }
 
+    Vector(Vector&& other) noexcept {
+        data_ = std::move(other.data_);
+        size_ = std::move(other.size_);
+        other.size_ = 0;
+    }
+
     ~Vector() {
         std::destroy_n(data_.GetAddress(), size_);
     }
@@ -100,6 +123,37 @@ public:
 
     size_t Capacity() const noexcept {
         return data_.Capacity();
+    }
+
+    Vector& operator=(const Vector& rhs) {
+        if (this != &rhs) {
+            if (rhs.size_ > data_.Capacity()) {
+                Vector rhs_copy(rhs);
+                Swap(rhs_copy);
+            } else {
+                if (rhs.size_ < size_) {
+                    for (size_t i = 0; i < rhs.size_; ++i) {
+                        data_[i] = rhs.data_[i];
+                    }
+                    std::destroy_n(data_.GetAddress() + rhs.size_, size_ - rhs.size_);
+                } else {
+                    for (size_t i = 0; i < rhs.size_; ++i) {
+                        data_[i] = rhs.data_[i];
+                    }
+                    std::uninitialized_copy_n(rhs.data_.GetAddress() + size_, rhs.size_ - size_, data_.GetAddress());
+                }
+                size_ = rhs.size_;
+            }
+        }
+        return *this;
+    }
+
+    Vector& operator=(Vector&& rhs) noexcept {
+        if (this != &rhs) {
+            data_ = std::move(rhs.data_);
+            size_ = std::move(rhs.size_);
+        }
+        return *this;
     }
 
     const T& operator[](size_t index) const noexcept {
@@ -129,25 +183,12 @@ public:
         // При выходе из метода старая память будет возвращена в кучу
     }
 
+    void Swap(Vector& other) noexcept {
+        std::swap(data_, other.data_);
+        std::swap(size_, other.size_);
+    }
+
 private:
-
-    // Вызывает деструкторы n объектов массива по адресу buf
-    static void DestroyN(T* buf, size_t n) noexcept {
-        for (size_t i = 0; i != n; ++i) {
-            Destroy(buf + i);
-        }
-    }
-
-    // Создаёт копию объекта elem в сырой памяти по адресу buf
-    static void CopyConstruct(T* buf, const T& elem) {
-        new (buf) T(elem);
-    }
-
-    // Вызывает деструктор объекта по адресу buf
-    static void Destroy(T* buf) noexcept {
-        buf->~T();
-    }
-
     RawMemory<T> data_;
     size_t size_ = 0;
 };
