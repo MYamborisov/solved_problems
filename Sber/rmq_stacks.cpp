@@ -10,11 +10,11 @@ using namespace std;
 void Solution(const vector<int>& numbers, istream& in, ostream& out) {
     string cmd;
     int R = 0;
-    stack <pair<int, int>> s1, s2;
+    stack <pair<int, int>> s1, s2;  // pair <value, current_maximum>
     s1.emplace(numbers[0], numbers[0]);
     while (in >> cmd) {
         if (cmd == "L") {
-            if (s2.empty()) {
+            if (s2.empty()) {   // if s2 empty move all elements from s1
                 while (!s1.empty()) {
                     int value = s1.top().first;
                     s1.pop();
@@ -32,7 +32,7 @@ void Solution(const vector<int>& numbers, istream& in, ostream& out) {
         if (s1.empty() || s2.empty()) {
             current_max = s1.empty() ? s2.top().second : s1.top().second;
         } else {
-            current_max = max(s1.top().second, s2.top().second);
+            current_max = max(s1.top().second, s2.top().second);    // compute maximum knowing maxima in two stacks
         }
         out << current_max << endl;
     }
