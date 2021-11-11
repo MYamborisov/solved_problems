@@ -1,6 +1,8 @@
 #pragma once
+
 #include <cassert>
 #include <cstdlib>
+#include <memory>
 #include <new>
 #include <utility>
 
@@ -78,38 +80,18 @@ public:
             : data_(size)
             , size_(size)  //
     {
-        size_t i = 0;
-        try {
-            for (; i != size; ++i) {
-                new (data_ + i) T();
-            }
-        } catch (...) {
-            DestroyN(data_.GetAddress(), i);
-            // Деструктор поля data_ освободит сырую память
-            // автоматически при перевыбрасывании исключения
-            throw;
-        }
+        std::uninitialized_value_construct_n(data_.GetAddress(), size);
     }
 
     Vector(const Vector& other)
             : data_(other.size_)
             , size_(other.size_)  //
     {
-        size_t i = 0;
-        try {
-            for (; i != other.size_; ++i) {
-                CopyConstruct(data_ + i, other.data_[i]);
-            }
-        } catch (...) {
-            DestroyN(data_.GetAddress(), i);
-            // Деструктор поля data_ освободит сырую память
-            // автоматически при перевыбрасывании исключения
-            throw;
-        }
+        std::uninitialized_copy_n(other.data_.GetAddress(), other.size_, data_.GetAddress());
     }
 
     ~Vector() {
-        DestroyN(data_.GetAddress(), size_);
+        std::destroy_n(data_.GetAddress(), size_);
     }
 
     size_t Size() const noexcept {
@@ -134,24 +116,17 @@ public:
             return;
         }
         RawMemory<T> new_data(new_capacity);
-
-        size_t i = 0;
-        try {
-            for (; i != size_; ++i) {
-                CopyConstruct(new_data.GetAddress() + i, data_[i]);
-            }
-        } catch (...) {
-            // В переменной i содержится количество созданных элементов.
-            // Теперь их надо разрушить
-            DestroyN(new_data.GetAddress(), i);
-            // Деструктор поля data_ освободит сырую память
-            // автоматически при перевыбрасывании исключения
-            throw;
+        // constexpr оператор if будет вычислен во время компиляции
+        if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) {
+            std::uninitialized_move_n(data_.GetAddress(), size_, new_data.GetAddress());
+        } else {
+            std::uninitialized_copy_n(data_.GetAddress(), size_, new_data.GetAddress());
         }
-
-        DestroyN(new_data.GetAddress(), size_);
-
+        // Разрушаем элементы в data_
+        std::destroy_n(data_.GetAddress(), size_);
+        // Избавляемся от старой сырой памяти, обменивая её на новую
         data_.Swap(new_data);
+        // При выходе из метода старая память будет возвращена в кучу
     }
 
 private:
