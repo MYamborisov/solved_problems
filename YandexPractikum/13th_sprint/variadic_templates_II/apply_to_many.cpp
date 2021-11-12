@@ -1,13 +1,12 @@
 #include <cassert>
 #include <memory>
 #include <string>
+#include <utility>
 
-// Шаблон ApplyToMany применяет функцию f (первый аргумент) последовательно к каждому из остальных своих аргументов
-/*
-    template <???>
-    void ApplyToMany(???) {
-    }
-*/
+template <typename Fun, typename ... Types>
+void ApplyToMany(Fun& Fcn, Types&&... values) {
+    (... , (Fcn(std::forward<Types>(values))));
+}
 
 void TestSum() {
     int x;

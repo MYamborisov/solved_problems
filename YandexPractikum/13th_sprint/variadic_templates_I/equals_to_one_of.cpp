@@ -5,13 +5,8 @@
 using namespace std::literals;
 
 template <typename T0, typename... Types>
-bool EqualsToOneOfImpl(const T0& v0, const Types&... values) {
+bool EqualsToOneOf(const T0& v0, const Types&... values) {
     return (... || (v0 == values));
-}
-
-template <typename... Types>
-bool EqualsToOneOf(const Types&... values) {
-    return EqualsToOneOfImpl(values...);
 }
 
 int main() {
