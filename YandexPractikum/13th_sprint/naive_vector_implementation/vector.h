@@ -19,15 +19,15 @@ public:
     RawMemory(const RawMemory&) = delete;
     RawMemory& operator=(const RawMemory& rhs) = delete;
 
-    RawMemory(RawMemory&& other) noexcept {
-        buffer_ = std::move(other.buffer_);
-        capacity_ = other.capacity_;
+    RawMemory(RawMemory&& other) noexcept
+            : buffer_(std::move(other.buffer_))
+            , capacity_(other.capacity_) {
         other.capacity_ = 0;
         other.buffer_ = nullptr;
     }
     RawMemory& operator=(RawMemory&& rhs) noexcept {
-        buffer_ = std::move(rhs.buffer_);
-        capacity_ = rhs.capacity_;
+        Swap(rhs);
+        rhs.Deallocate(rhs.buffer_);
         rhs.capacity_ = 0;
         rhs.buffer_ = nullptr;
         return *this;
