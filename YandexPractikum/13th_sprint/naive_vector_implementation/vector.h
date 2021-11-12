@@ -107,14 +107,70 @@ public:
         std::uninitialized_copy_n(other.data_.GetAddress(), other.size_, data_.GetAddress());
     }
 
-    Vector(Vector&& other) noexcept {
-        data_ = std::move(other.data_);
-        size_ = other.size_;
+    Vector(Vector&& other) noexcept
+            : data_(std::move(other.data_))
+            , size_(other.size_)  //
+    {
         other.size_ = 0;
     }
 
     ~Vector() {
         std::destroy_n(data_.GetAddress(), size_);
+    }
+
+    void Resize(size_t new_size) {
+        if (new_size > size_) {
+            Reserve(new_size);
+            std::uninitialized_value_construct_n(data_.GetAddress() + size_, new_size - size_);
+        } else {
+            std::destroy_n(data_.GetAddress() + new_size, size_ - new_size);
+        }
+        size_ = new_size;
+    }
+
+    void PushBack(const T& value) {
+        if (size_ == Capacity()) {
+            RawMemory<T> new_data(size_ == 0 ? 1 : size_ * 2);
+            new (new_data + size_) T(value);
+            // constexpr оператор if будет вычислен во время компиляции
+            if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) {
+                std::uninitialized_move_n(data_.GetAddress(), size_, new_data.GetAddress());
+            } else {
+                std::uninitialized_copy_n(data_.GetAddress(), size_, new_data.GetAddress());
+            }
+            // Разрушаем элементы в data_
+            std::destroy_n(data_.GetAddress(), size_);
+            // Избавляемся от старой сырой памяти, обменивая её на новую
+            data_.Swap(new_data);
+        } else {
+            new (data_ + size_) T(value);
+        }
+        ++size_;
+    }
+
+    void PushBack(T&& value) {
+        if (size_ == Capacity()) {
+            RawMemory<T> new_data(size_ == 0 ? 1 : size_ * 2);
+            new (new_data + size_) T(std::move(value));
+            // constexpr оператор if будет вычислен во время компиляции
+            if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) {
+                std::uninitialized_move_n(data_.GetAddress(), size_, new_data.GetAddress());
+            } else {
+                std::uninitialized_copy_n(data_.GetAddress(), size_, new_data.GetAddress());
+            }
+            // Разрушаем элементы в data_
+            std::destroy_n(data_.GetAddress(), size_);
+            // Избавляемся от старой сырой памяти, обменивая её на новую
+            data_.Swap(new_data);
+        } else {
+            new (data_ + size_) T(std::move(value));
+        }
+        ++size_;
+    }
+
+    void PopBack() /* noexcept */ {
+        std::destroy_n(data_.GetAddress() + size_ - 1, 1);
+        --size_;
     }
 
     size_t Size() const noexcept {
