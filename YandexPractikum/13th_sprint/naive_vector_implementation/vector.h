@@ -18,16 +18,16 @@ public:
 
     RawMemory(const RawMemory&) = delete;
     RawMemory& operator=(const RawMemory& rhs) = delete;
+
     RawMemory(RawMemory&& other) noexcept {
         buffer_ = std::move(other.buffer_);
-        capacity_ = std::move(other.capacity_);
+        capacity_ = other.capacity_;
         other.capacity_ = 0;
         other.buffer_ = nullptr;
     }
     RawMemory& operator=(RawMemory&& rhs) noexcept {
-        Deallocate(buffer_);
         buffer_ = std::move(rhs.buffer_);
-        capacity_ = std::move(rhs.capacity_);
+        capacity_ = rhs.capacity_;
         rhs.capacity_ = 0;
         rhs.buffer_ = nullptr;
         return *this;
@@ -109,7 +109,7 @@ public:
 
     Vector(Vector&& other) noexcept {
         data_ = std::move(other.data_);
-        size_ = std::move(other.size_);
+        size_ = other.size_;
         other.size_ = 0;
     }
 
@@ -137,10 +137,10 @@ public:
                     }
                     std::destroy_n(data_.GetAddress() + rhs.size_, size_ - rhs.size_);
                 } else {
-                    for (size_t i = 0; i < rhs.size_; ++i) {
+                    for (size_t i = 0; i < size_; ++i) {
                         data_[i] = rhs.data_[i];
                     }
-                    std::uninitialized_copy_n(rhs.data_.GetAddress() + size_, rhs.size_ - size_, data_.GetAddress());
+                    std::uninitialized_copy_n(rhs.data_.GetAddress() + size_, rhs.size_ - size_, data_.GetAddress() + size_);
                 }
                 size_ = rhs.size_;
             }
@@ -151,7 +151,8 @@ public:
     Vector& operator=(Vector&& rhs) noexcept {
         if (this != &rhs) {
             data_ = std::move(rhs.data_);
-            size_ = std::move(rhs.size_);
+            size_ = rhs.size_;
+            rhs.size_ = 0;
         }
         return *this;
     }
