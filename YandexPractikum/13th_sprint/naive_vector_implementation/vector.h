@@ -168,7 +168,29 @@ public:
         ++size_;
     }
 
-    void PopBack() /* noexcept */ {
+    template <typename... Args>
+    T& EmplaceBack(Args&&... args) {
+        if (size_ == Capacity()) {
+            RawMemory<T> new_data(size_ == 0 ? 1 : size_ * 2);
+            new (new_data + size_) T(std::forward<Args>(args)...);
+            // constexpr оператор if будет вычислен во время компиляции
+            if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) {
+                std::uninitialized_move_n(data_.GetAddress(), size_, new_data.GetAddress());
+            } else {
+                std::uninitialized_copy_n(data_.GetAddress(), size_, new_data.GetAddress());
+            }
+            // Разрушаем элементы в data_
+            std::destroy_n(data_.GetAddress(), size_);
+            // Избавляемся от старой сырой памяти, обменивая её на новую
+            data_.Swap(new_data);
+        } else {
+            new (data_ + size_) T(std::forward<Args>(args)...);
+        }
+        ++size_;
+        return data_[size_ - 1];
+    }
+
+void PopBack() /* noexcept */ {
         std::destroy_n(data_.GetAddress() + size_ - 1, 1);
         --size_;
     }
