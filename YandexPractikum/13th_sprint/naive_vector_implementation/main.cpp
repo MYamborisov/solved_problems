@@ -451,8 +451,6 @@ void Test6() {
         assert(v.Size() == 1);
         assert(v.Capacity() >= v.Size());
         assert(&*pos == &v[0]);
-        std::cout << Obj::num_copied << " " << Obj::num_default_constructed << " " << Obj::num_constructed_with_id << " "
-                  << Obj::num_moved << " " << Obj::num_move_assigned << " " << Obj::num_assigned << std::endl;
         assert(Obj::num_moved == 1);
         assert(Obj::num_constructed_with_id == 1);
         assert(Obj::num_copied == 0);
@@ -532,17 +530,10 @@ void Test6() {
         const int old_num_moved = Obj::num_moved;
         assert(v.Capacity() == SIZE * 2);
         auto* pos = v.Emplace(v.cbegin() + 3, ID, "Ivan"s);
-//        for (auto now : v) {
-//            std::cout << now.id << " " << now.name << std::endl;
-//        }
-        std::cout << v[3].id << " " << v[3].name << std::endl;
         assert(v.Size() == SIZE + 1);
         assert(&*pos == &v[3]);
         assert(v[3].id == ID);
         assert(v[3].name == "Ivan");
-        std::cout << old_num_moved << std::endl;
-        std::cout << Obj::num_copied << " " << Obj::num_default_constructed << " " << Obj::num_constructed_with_id_and_name << " "
-                << Obj::num_moved << " " << Obj::num_move_assigned << " " << Obj::num_assigned << std::endl;
         assert(Obj::num_copied == 0);
         assert(Obj::num_default_constructed == SIZE);
         assert(Obj::num_constructed_with_id_and_name == 1);

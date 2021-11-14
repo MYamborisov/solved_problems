@@ -179,50 +179,47 @@ public:
     }
 
     template <typename... Args>
-    iterator Emplace(const_iterator poss, Args&&... args) {
-        int pos_ind = poss - cbegin();
-        auto pos = begin() + pos_ind;
+    iterator Emplace(const_iterator pos, Args&&... args) {
+        int pos_index = pos - cbegin();
         if (size_ == Capacity()) {
             RawMemory<T> new_data(size_ == 0 ? 1 : size_ * 2);
-            new (new_data.GetAddress() + pos_ind) T(std::forward<Args>(args)...);
+            new (new_data.GetAddress() + pos_index) T(std::forward<Args>(args)...);
             try {
                 if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) {
-                    std::uninitialized_move_n(data_.GetAddress(), pos - begin(), new_data.GetAddress());
+                    std::uninitialized_move_n(data_.GetAddress(), pos_index, new_data.GetAddress());
                 } else {
-                    std::uninitialized_copy_n(data_.GetAddress(), pos - begin(), new_data.GetAddress());
+                    std::uninitialized_copy_n(data_.GetAddress(), pos_index, new_data.GetAddress());
                 }
-            } catch(...) {
-                std::destroy_n(new_data.GetAddress() + (pos - begin()), 1);
+            } catch (...) {
+                std::destroy_n(new_data.GetAddress() + pos_index, 1);
+                throw;
             }
 
             try {
                 if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) {
-                    std::uninitialized_move_n(data_.GetAddress() + (pos - begin()), end() - pos, new_data.GetAddress() + (pos - begin()) + 1);
+                    std::uninitialized_move_n(data_.GetAddress() + pos_index, size_ - pos_index,
+                                              new_data.GetAddress() + pos_index + 1);
                 } else {
-                    std::uninitialized_copy_n(data_.GetAddress() + (pos - begin()), end() - pos, new_data.GetAddress() + (pos - begin()) + 1);
+                    std::uninitialized_copy_n(data_.GetAddress() + pos_index, size_ - pos_index,
+                                              new_data.GetAddress() + pos_index + 1);
                 }
-            } catch(...) {
-                std::destroy_n(new_data.GetAddress(), pos - begin() + 1);
+            } catch (...) {
+                std::destroy_n(new_data.GetAddress(), pos_index + 1);
+                throw;
             }
             std::destroy_n(data_.GetAddress(), size_);
             data_.Swap(new_data);
-            pos = begin() + pos_ind;
         } else {
-            if (pos != end()) {
-                auto temp = T(std::forward<Args>(args)...);
-                if constexpr (std::is_nothrow_move_constructible_v<T> || !std::is_copy_constructible_v<T>) {
-                    std::uninitialized_move_n(data_.GetAddress() + size_ - 1, 1, data_.GetAddress() + size_);
-                } else {
-                    std::uninitialized_copy_n(data_.GetAddress() + size_ - 1, 1, data_.GetAddress() + size_);
-                }
-                std::move_backward(pos, end() - 1, end());
-                data_[pos - begin()] = std::move(temp);
+            if (pos != cend()) {
+                new (end()) T(std::forward<T>(*(end() - 1)));
+                std::move_backward(begin() + pos_index, end() - 1, end());
+                data_[pos_index] = T(std::forward<Args>(args)...);
             } else {
-                new (pos) T(std::forward<Args>(args)...);
+                new (data_.GetAddress() + pos_index) T(std::forward<Args>(args)...);
             }
         }
         ++size_;
-        return pos;
+        return begin() + pos_index;
     }
 
     iterator Insert(const_iterator pos, const T& value) {
