@@ -6,9 +6,11 @@
 
 using namespace std::string_view_literals;
 
+extern const vtable vtable_InternationalDrivingLicence;
+
 class InternationalDrivingLicence : public DrivingLicence {
 public:
-    InternationalDrivingLicence() {
+    InternationalDrivingLicence() : DrivingLicence(&vtable_InternationalDrivingLicence){
         std::cout << "InternationalDrivingLicence::Ctor()"sv << std::endl;
     }
 
@@ -25,4 +27,11 @@ public:
     void PrintID() const {
         std::cout << "InternationalDrivingLicence::PrintID() : "sv << GetID() << std::endl;
     }
+
+    void Delete() {
+        delete this;
+    }
 };
+
+const vtable vtable_InternationalDrivingLicence(
+        static_cast<void (IdentityDocument::*)() const>(&InternationalDrivingLicence::PrintID), static_cast<void (IdentityDocument::*)()>(&InternationalDrivingLicence::Delete));

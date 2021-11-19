@@ -7,10 +7,13 @@
 
 using namespace std::string_view_literals;
 
+extern const vtable vtable_Passport;
+
 class Passport : public IdentityDocument {
 public:
     Passport()
-            : expiration_date_(GetExpirationDate())
+            : IdentityDocument(&vtable_Passport),
+              expiration_date_(GetExpirationDate())
     {
         std::cout << "Passport::Ctor()"sv << std::endl;
     }
@@ -24,6 +27,7 @@ public:
 
     ~Passport() {
         std::cout << "Passport::Dtor()"sv << std::endl;
+        //vtable_ptr = &vtable_IdentityDocument;
     }
 
     void PrintID() const {
@@ -32,8 +36,11 @@ public:
                   << expiration_date_.tm_year + 1900 << std::endl;
     }
 
-    virtual void PrintVisa(const std::string& country) const {
+    void PrintVisa(const std::string& country) const {
         std::cout << "Passport::PrintVisa("sv << country << ") : "sv << GetID() << std::endl;
+    }
+    void Delete() {
+        delete this;
     }
 
 private:
@@ -47,3 +54,8 @@ private:
         return exp_date;
     }
 };
+
+const vtable vtable_Passport(
+        static_cast<void (IdentityDocument::*)() const>(&Passport::PrintID), static_cast<void (IdentityDocument::*)()>(&Passport::Delete));
+
+

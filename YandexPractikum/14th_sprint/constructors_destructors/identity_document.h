@@ -5,17 +5,22 @@
 
 using namespace std::string_view_literals;
 
-class IdentityDocument;
-struct VTable {
-    void (IdentityDocument::*print_id)() const;
-};
+struct vtable;
+
+extern const vtable vtable_IdentityDocument;
 
 class IdentityDocument {
 public:
     IdentityDocument()
-            : unique_id_(++unique_id_count_)
+            : vtable_ptr(&vtable_IdentityDocument),
+              unique_id_(++unique_id_count_)
     {
-        vtable.print_id = &IdentityDocument::PrintID_;
+        std::cout << "IdentityDocument::Ctor() : "sv << unique_id_ << std::endl;
+    }
+
+    IdentityDocument(const vtable* vtable_ptr)
+            : vtable_ptr(vtable_ptr),
+            unique_id_(++unique_id_count_) {
         std::cout << "IdentityDocument::Ctor() : "sv << unique_id_ << std::endl;
     }
 
@@ -25,27 +30,35 @@ public:
     }
 
     IdentityDocument(const IdentityDocument& other)
-            : unique_id_(++unique_id_count_)
+            : vtable_ptr(&vtable_IdentityDocument),
+              unique_id_(++unique_id_count_)
     {
         std::cout << "IdentityDocument::CCtor() : "sv << unique_id_ << std::endl;
     }
 
     IdentityDocument& operator=(const IdentityDocument&) = delete;
 
-    void PrintID() const {
-        vtable.print_id;
-    }
-
     void PrintID_() const {
         std::cout << "IdentityDocument::PrintID() : "sv << unique_id_ << std::endl;
+    }
+
+    void PrintID() const;
+
+    void Delete();
+
+    void Delete_() {
+        delete this;
     }
 
     static void PrintUniqueIDCount() {
         std::cout << "unique_id_count_ : "sv << unique_id_count_ << std::endl;
     }
 
-    VTable vtable;
+    friend vtable; // just in case for non-public methods
 
+    const vtable* vtable_ptr;
+
+protected:
     int GetID() const {
         return unique_id_;
     }
@@ -56,3 +69,28 @@ private:
 };
 
 int IdentityDocument::unique_id_count_ = 0;
+
+struct vtable
+{
+    void (IdentityDocument::* const PrintID)() const;
+    void (IdentityDocument::* const Delete)();
+
+    // constructor
+    vtable (
+            void (IdentityDocument::* const PrintID)() const,
+            void (IdentityDocument::* const Delete)()
+    ) : PrintID(PrintID), Delete(Delete) { }
+};
+
+const vtable vtable_IdentityDocument(&IdentityDocument::PrintID_, &IdentityDocument::Delete_);
+
+void IdentityDocument::PrintID() const
+{
+    return (this->*(vtable_ptr->PrintID))();
+}
+
+void IdentityDocument::Delete()
+{
+    return (this->*(vtable_ptr->Delete))();
+}
+

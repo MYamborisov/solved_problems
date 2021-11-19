@@ -6,10 +6,11 @@
 
 using namespace std::string_view_literals;
 
+extern const vtable vtable_DrivingLicence;
+
 class DrivingLicence : public IdentityDocument {
 public:
-    DrivingLicence() {
-        base_.vtable.print_id = reinterpret_cast<DrivingLicence::*()>(&DrivingLicence::PrintID_);
+    DrivingLicence() : IdentityDocument(&vtable_DrivingLicence) {
         std::cout << "DrivingLicence::Ctor()"sv << std::endl;
     }
 
@@ -19,17 +20,22 @@ public:
         std::cout << "DrivingLicence::CCtor()"sv << std::endl;
     }
 
+    DrivingLicence(const vtable* vtable_ptr) : IdentityDocument(vtable_ptr) {
+        std::cout << "DrivingLicence::Ctor()"sv << std::endl;
+    }
+
     ~DrivingLicence() {
         std::cout << "DrivingLicence::Dtor()"sv << std::endl;
     }
 
     void PrintID() const {
-        base_.vtable.print_id;
-    }
-
-    void PrintID_() const {
         std::cout << "DrivingLicence::PrintID() : "sv << GetID() << std::endl;
     }
 
-    IdentityDocument base_;
+    void Delete() {
+        delete this;
+    }
 };
+
+const vtable vtable_DrivingLicence(
+        static_cast<void (IdentityDocument::*)() const>(&DrivingLicence::PrintID), static_cast<void (IdentityDocument::*)()>(&DrivingLicence::Delete));
