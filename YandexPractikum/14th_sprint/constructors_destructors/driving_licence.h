@@ -26,6 +26,7 @@ public:
 
     ~DrivingLicence() {
         std::cout << "DrivingLicence::Dtor()"sv << std::endl;
+        vtable_ptr = &vtable_IdentityDocument;
     }
 
     void PrintID() const {
@@ -33,7 +34,8 @@ public:
     }
 
     void Delete() {
-        delete this;
+        vtable_ptr = &vtable_IdentityDocument;
+        this->~DrivingLicence();
     }
 };
 

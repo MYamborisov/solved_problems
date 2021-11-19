@@ -22,6 +22,7 @@ public:
 
     ~InternationalDrivingLicence() {
         std::cout << "InternationalDrivingLicence::Dtor()"sv << std::endl;
+        vtable_ptr = &vtable_DrivingLicence;
     }
 
     void PrintID() const {
@@ -29,7 +30,8 @@ public:
     }
 
     void Delete() {
-        delete this;
+        vtable_ptr = &vtable_DrivingLicence;
+        this->~InternationalDrivingLicence();
     }
 };
 

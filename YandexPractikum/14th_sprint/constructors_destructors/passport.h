@@ -27,7 +27,7 @@ public:
 
     ~Passport() {
         std::cout << "Passport::Dtor()"sv << std::endl;
-        //vtable_ptr = &vtable_IdentityDocument;
+        vtable_ptr = &vtable_IdentityDocument;
     }
 
     void PrintID() const {
@@ -40,7 +40,8 @@ public:
         std::cout << "Passport::PrintVisa("sv << country << ") : "sv << GetID() << std::endl;
     }
     void Delete() {
-        delete this;
+        vtable_ptr = &vtable_IdentityDocument;
+        this->~Passport();
     }
 
 private:

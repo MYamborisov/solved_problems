@@ -32,6 +32,7 @@ public:
         delete identity_doc1_;
         delete identity_doc2_;
         std::cout << "TravelPack::Dtor()"sv << std::endl;
+        vtable_ptr = &vtable_IdentityDocument;
     }
 
     void PrintID() const {
@@ -42,7 +43,8 @@ public:
     }
 
     void Delete() {
-        delete this;
+        vtable_ptr = &vtable_IdentityDocument;
+        this->~TravelPack();
     }
 
 private:
