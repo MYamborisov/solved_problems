@@ -54,7 +54,7 @@ public:
         std::cout << "unique_id_count_ : "sv << unique_id_count_ << std::endl;
     }
 
-    friend vtable; // just in case for non-public methods
+    friend vtable;
 
     const vtable* vtable_ptr;
 

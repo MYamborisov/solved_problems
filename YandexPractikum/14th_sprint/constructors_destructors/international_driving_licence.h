@@ -12,11 +12,13 @@ class InternationalDrivingLicence : public DrivingLicence {
 public:
     InternationalDrivingLicence() : DrivingLicence(&vtable_InternationalDrivingLicence){
         std::cout << "InternationalDrivingLicence::Ctor()"sv << std::endl;
+        vtable_ptr = &vtable_InternationalDrivingLicence;
     }
 
     InternationalDrivingLicence(const InternationalDrivingLicence& other)
             : DrivingLicence(other)
     {
+        vtable_ptr = &vtable_InternationalDrivingLicence;
         std::cout << "InternationalDrivingLicence::CCtor()"sv << std::endl;
     }
 

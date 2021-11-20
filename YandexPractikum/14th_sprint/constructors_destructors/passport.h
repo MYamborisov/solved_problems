@@ -15,6 +15,7 @@ public:
             : IdentityDocument(&vtable_Passport),
               expiration_date_(GetExpirationDate())
     {
+        vtable_ptr = &vtable_Passport;
         std::cout << "Passport::Ctor()"sv << std::endl;
     }
 
@@ -22,6 +23,7 @@ public:
             : IdentityDocument(other)
             , expiration_date_(other.expiration_date_)
     {
+        vtable_ptr = &vtable_Passport;
         std::cout << "Passport::CCtor()"sv << std::endl;
     }
 

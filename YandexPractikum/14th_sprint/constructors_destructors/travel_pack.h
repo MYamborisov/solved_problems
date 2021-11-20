@@ -15,22 +15,24 @@ public:
             , identity_doc1_(new Passport())
             , identity_doc2_(new DrivingLicence())
     {
+        vtable_ptr = &vtable_TravelPack;
         std::cout << "TravelPack::Ctor()"sv << std::endl;
     }
 
     TravelPack(const TravelPack& other)
             : IdentityDocument(other)
-            , identity_doc1_(new Passport(*static_cast<Passport*>(other.identity_doc1_)))
-            , identity_doc2_(new DrivingLicence(*static_cast<DrivingLicence*>(other.identity_doc2_)))
+            , identity_doc1_(new Passport(*reinterpret_cast<Passport*>(other.identity_doc1_)))
+            , identity_doc2_(new DrivingLicence(*reinterpret_cast<DrivingLicence*>(other.identity_doc2_)))
             , additional_pass_(other.additional_pass_)
             , additional_dr_licence_(other.additional_dr_licence_)
     {
+        vtable_ptr = &vtable_TravelPack;
         std::cout << "TravelPack::CCtor()"sv << std::endl;
     }
 
     ~TravelPack() {
-        delete identity_doc1_;
-        delete identity_doc2_;
+        identity_doc1_->Delete();
+        identity_doc2_->Delete();
         std::cout << "TravelPack::Dtor()"sv << std::endl;
         vtable_ptr = &vtable_IdentityDocument;
     }
