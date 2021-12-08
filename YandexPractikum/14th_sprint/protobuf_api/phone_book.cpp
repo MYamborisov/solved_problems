@@ -10,10 +10,10 @@ PhoneBook::PhoneBook(std::vector<Contact> contacts) {
 }
 
 PhoneBook::ContactRange PhoneBook::FindByNamePrefix(std::string_view name_prefix) const {
-    auto first = lower_bound(contacts_.begin(), contacts_.end(), [](const Contact& l, std::string_view r){
+    Iterator first = &*lower_bound(contacts_.begin(), contacts_.end(), name_prefix,  [](const Contact& l, std::string_view r){
         return l.name < r;
     });
-    auto last = upper_bound(contacts_.begin(), contacts_.end(), [](std::string_view l, const Contact& r){
+    Iterator last = &*upper_bound(contacts_.begin(), contacts_.end(), name_prefix, [](std::string_view l, const Contact& r){
         if (r.name.size() > l.size()) {
             return l < r.name.substr(0, r.name.size());
         }
@@ -37,7 +37,7 @@ void PhoneBook::SaveTo(std::ostream &output) const {
             temp_date.set_day(contact.birthday->day);
             *temp_cnt.mutable_birthday() = temp_date;
         }
-        v.add_contact(temp_cnt);
+        *v.add_contact() = std::move(temp_cnt);
     }
     v.SerializeToOstream(&output);
 }
@@ -49,11 +49,11 @@ PhoneBook DeserializePhoneBook(std::istream& input) {
     std::vector<Contact> result(size);
     for (int i = 0; i < size; ++i) {
         result[i].name = v.contact(i).name();
-        if (v.contact(i).has_birthday) {
+        if (v.contact(i).has_birthday()) {
             Date date;
-            date.year = v.contact(i).birthday.year;
-            date.month = v.contact(i).birthday.month;
-            date.day = v.contact(i).birthday.day;
+            date.year = v.contact(i).birthday().year();
+            date.month = v.contact(i).birthday().month();
+            date.day = v.contact(i).birthday().day();
             result[i].birthday = date;
         }
         int phones_size = v.contact(i).phone_number_size();
