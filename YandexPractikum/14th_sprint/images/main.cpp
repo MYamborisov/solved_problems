@@ -1,4 +1,5 @@
 #include "ppm_image.h"
+#include "bmp_image.h"
 
 #include <iostream>
 #include <string_view>
@@ -77,7 +78,7 @@ int main(int argc, const char** argv) {
 //        return 1;
 //    }
 
-    auto image = img_lib::LoadPPM("patrik.ppm"s);
+    auto image = img_lib::LoadBMP("b4.bmp"s);
     if (!image) {
         cerr << "Error loading image"sv << endl;
         return 2;
@@ -85,10 +86,10 @@ int main(int argc, const char** argv) {
 
     //NegateInplace(image);
     //image = Sobel(image);
-    VMirrInplace(image);
+    //VMirrInplace(image);
     //HMirrInplace(image);
 
-    if (!img_lib::SavePPM("my_patrik_v.ppm"s, image)) {
+    if (!img_lib::SaveBMP("my_b4.bmp"s, image)) {
         cerr << "Error saving image"sv << endl;
         return 3;
     }
